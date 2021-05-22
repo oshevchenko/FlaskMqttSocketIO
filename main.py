@@ -3,6 +3,7 @@ from flask import Flask, render_template
 from flask_mqtt import Mqtt
 from flask_socketio import SocketIO
 from werkzeug.serving import run_simple
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 eventlet.monkey_patch()
 
@@ -10,9 +11,11 @@ app = Flask(__name__, template_folder='./templates')
 app.config['MQTT_BROKER_URL'] = 'test.mosquitto.org'
 app.config['MQTT_BROKER_PORT'] = 1883
 app.config['MQTT_REFRESH_TIME'] = 1.0
+app.secret_key = '4ce2134367cf4025b6dfb7f7fa5315dd'
 
 mqtt = Mqtt(app)
 socketio = SocketIO(app)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 
 @mqtt.on_connect()
 def handle_connect(client, userdata, flags, rc):
