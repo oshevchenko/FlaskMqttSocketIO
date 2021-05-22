@@ -1,0 +1,17 @@
+# Copy to  /etc/systemd/system/flask_mqtt.service
+[Unit]
+Description=Gunicorn instance to serve flask_mqtt project.
+After=network.target
+
+[Service]
+User=oshevchenko
+Group=www-data
+
+WorkingDirectory=/home/oshevchenko/workspace/flask_venv/Mqtt
+Environment="PATH=/home/oshevchenko/workspace/flask_venv/bin"
+
+ExecStart=/home/oshevchenko/workspace/flask_venv/bin/gunicorn --bind unix:flask_mqtt.sock --worker-class eventlet -w 1 flask_mqtt_socketio:app
+
+[Install]
+WantedBy=multi-user.target
+
